@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="pl" class="dark">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Gym Tracker</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+	<link rel="stylesheet" href="/style.css" />
+</head>
+<body class="bg-[#0F1115] text-[#FFFFFF] min-h-screen flex flex-col font-sans select-none antialiased pb-20 md:pb-0">
+	<div id="desktop-wrapper" class="w-full max-w-lg mx-auto flex-1 flex flex-col bg-[#0F1115] md:my-6 md:rounded-2xl md:shadow-[0_0_50px_rgba(0,0,0,0.8)] md:border md:border-white/5 md:overflow-hidden min-h-screen md:min-h-[85vh]">
+		<header id="main-header" class="px-4 py-3.5 bg-[#0F1115]/80 backdrop-blur-md border-b border-white/5 flex items-center justify-between sticky top-0 z-40">
+			<div class="flex items-center gap-2">
+				<div class="w-8 h-8 rounded-lg bg-[#BFFF00]/10 flex items-center justify-center border border-[#BFFF00]/20">
+					<svg class="w-5 h-5 text-[#BFFF00]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+						<path d="m6.5 6.5 11 11" />
+						<path d="m21 16-4 4-4-4" />
+						<path d="m11 8-4-4-4 4" />
+						<path d="M16 21H3" />
+						<path d="M21 3H8" />
+					</svg>
+				</div>
+				<div>
+					<span class="text-xs font-bold text-[#BFFF00] tracking-widest uppercase">Iron</span>
+					<h1 class="text-base font-extrabold text-white leading-none">GYM TRACKER</h1>
+				</div>
+			</div>
+			<div id="session-badge" class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/5">
+				<span id="badge-dot" class="w-2 h-2 rounded-full bg-zinc-600 animate-pulse-subtle"></span>
+				<span id="badge-text" class="text-[10px] font-bold text-[#9BA3AF] uppercase tracking-wider">Brak treningu</span>
+			</div>
+		</header>
+
+		<main id="app-main" class="flex-1 overflow-y-auto px-4 py-4 space-y-4 custom-scroll">
+			<section id="pane-trening" data-tab-pane="trening" class="space-y-4">
+				<div id="idle-session-card" class="bg-[#1A1D23] border border-white/5 rounded-xl p-5 text-center space-y-4 relative overflow-hidden">
+					<div class="absolute -top-12 -right-12 w-32 h-32 bg-[#BFFF00]/5 rounded-full blur-2xl"></div>
+					<div class="w-12 h-12 rounded-full bg-white/5 border border-white/5 flex items-center justify-center mx-auto text-[#BFFF00]">
+						<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<path d="M12 2v20" />
+							<path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+						</svg>
+					</div>
+					<div class="space-y-1">
+						<h2 class="text-lg font-bold text-white">Czas na trening!</h2>
+						<p class="text-xs text-[#9BA3AF]">Rozpocznij nową sesję, aby rejestrować serie, powtórzenia i budować sylwetkę.</p>
+					</div>
+					<div class="space-y-3 pt-2">
+						<div class="text-left">
+							<label for="workout-name-input" class="text-[10px] font-bold text-[#9BA3AF] uppercase tracking-widest block mb-1">Nazwa treningu</label>
+							<input type="text" id="workout-name-input" value="Mój Trening" class="w-full bg-[#0F1115] border border-white/10 rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-[#BFFF00] font-medium" />
+						</div>
+						<button id="btn-start-workout" class="w-full bg-[#BFFF00] hover:bg-[#a6df00] text-black font-extrabold text-sm py-3 px-4 rounded-lg transition-all duration-200 shadow-[0_4px_20px_rgba(191,255,0,0.25)] flex items-center justify-center gap-2 font-bold uppercase tracking-wider">
+							<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+								<polygon points="5 3 19 12 5 21 5 3" />
+							</svg>
+							ROZPOCZNIJ NOWY TRENING
+						</button>
+					</div>
+					<div class="border-t border-white/5 pt-4 space-y-2 text-left">
+						<span class="text-[10px] font-bold text-[#9BA3AF] uppercase tracking-widest block">Szybki start z planu</span>
+						<div id="preset-plans-list" class="grid gap-2"></div>
+					</div>
+				</div>
+
+				<div id="last-workout-banner" class="bg-[#1A1D23]/50 border border-white/5 rounded-xl p-4 flex items-center justify-between">
+					<div class="space-y-0.5">
+						<span class="text-[9px] font-bold text-[#9BA3AF] uppercase tracking-wider">Ostatni trening</span>
+						<p id="last-workout-name" class="text-xs font-semibold text-zinc-300">Brak historii</p>
+					</div>
+					<div class="text-right">
+						<span id="last-workout-date" class="text-xs text-[#9BA3AF] font-medium">--.--.----</span>
+					</div>
+				</div>
+
+				<div id="active-session-card" class="space-y-4 hidden">
+					<div class="bg-[#1A1D23] border border-white/5 rounded-xl p-4 flex items-center justify-between shadow-[0_4px_15px_rgba(0,0,0,0.2)]">
+						<div class="space-y-0.5">
+							<span id="active-session-label" class="text-[10px] font-bold text-[#BFFF00] uppercase tracking-wider">Aktualny trening</span>
+							<h3 id="active-session-name" class="text-sm font-bold text-white">Mój Trening</h3>
+						</div>
+						<div class="text-right">
+							<span class="text-[10px] font-bold text-[#9BA3AF] uppercase tracking-widest block">Czas pracy</span>
+							<p id="workout-timer" class="font-mono text-lg font-bold text-[#BFFF00] tracking-tight">00:00</p>
+						</div>
+					</div>
+
+					<div class="bg-[#1A1D23] border border-white/5 rounded-xl p-4 space-y-3">
+						<div class="flex items-center justify-between">
+							<h4 class="text-xs font-extrabold text-[#9BA3AF] uppercase tracking-widest">Dodaj ćwiczenie</h4>
+						</div>
+						<div class="flex gap-2">
+							<select id="exercise-list-dropdown" class="flex-1 bg-[#0F1115] border border-white/10 rounded-lg px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-[#BFFF00] font-medium"></select>
+							<button id="btn-add-exercise-to-workout" class="bg-white/10 hover:bg-white/15 text-white font-bold text-xs px-4 py-2.5 rounded-lg transition-all border border-white/5">Dodaj</button>
+						</div>
+					</div>
+
+					<div id="active-exercises-container" class="space-y-4"></div>
+
+					<button id="btn-finish-workout" class="w-full bg-[#BFFF00] hover:bg-[#a6df00] text-black font-extrabold text-xs py-3 px-4 rounded-lg tracking-wider transition-all duration-200 shadow-[0_4px_15px_rgba(191,255,0,0.15)] flex items-center justify-center gap-2">
+						<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+							<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+							<polyline points="22 4 12 14.01 9 11.01" />
+						</svg>
+						ZAKOŃCZ TRENING
+					</button>
+				</div>
+			</section>
+
+			<section id="pane-raporty" data-tab-pane="raporty" class="space-y-4 hidden">
+				<div class="bg-[#1A1D23] border border-white/5 rounded-xl p-4 space-y-4 shadow-lg">
+					<div class="flex items-center justify-between">
+						<button id="btn-prev-month" class="p-1.5 rounded-lg bg-white/5 border border-white/5 hover:border-[#BFFF00]/50 text-[#9BA3AF] hover:text-white transition-all">
+							<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<polyline points="15 18 9 12 15 6" />
+							</svg>
+						</button>
+						<h3 id="calendar-title" class="text-sm font-extrabold text-white uppercase tracking-widest">Lipiec 2026</h3>
+						<button id="btn-next-month" class="p-1.5 rounded-lg bg-white/5 border border-white/5 hover:border-[#BFFF00]/50 text-[#9BA3AF] hover:text-white transition-all">
+							<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<polyline points="9 18 15 12 9 6" />
+							</svg>
+						</button>
+					</div>
+					<div class="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-[#9BA3AF] uppercase tracking-wider">
+						<span>Pn</span>
+						<span>Wt</span>
+						<span>Śr</span>
+						<span>Cz</span>
+						<span>Pt</span>
+						<span>Sb</span>
+						<span>Nd</span>
+					</div>
+					<div id="calendar-days-grid" class="grid grid-cols-7 gap-1 text-center text-xs font-semibold"></div>
+				</div>
+
+				<div class="grid grid-cols-3 gap-2">
+					<div class="bg-[#1A1D23] border border-white/5 rounded-xl p-3 text-center space-y-1">
+						<span class="text-[9px] font-bold text-[#9BA3AF] uppercase tracking-widest block">Treningi</span>
+						<p id="stats-total-count" class="text-lg font-black text-white">0</p>
+					</div>
+					<div class="bg-[#1A1D23] border border-white/5 rounded-xl p-3 text-center space-y-1">
+						<span class="text-[9px] font-bold text-[#9BA3AF] uppercase tracking-widest block">Objętość</span>
+						<p id="stats-total-volume" class="text-lg font-black text-white">0 kg</p>
+					</div>
+					<div class="bg-[#1A1D23] border border-white/5 rounded-xl p-3 text-center space-y-1">
+						<span class="text-[9px] font-bold text-[#9BA3AF] uppercase tracking-widest block">Rekord</span>
+						<p id="stats-max-weight" class="text-lg font-black text-[#BFFF00]">0 kg</p>
+					</div>
+				</div>
+
+				<div class="bg-[#1A1D23] border border-white/5 rounded-xl p-4 space-y-3">
+					<div class="border-b border-white/5 pb-2 flex items-center justify-between">
+						<h4 id="reports-date-label" class="text-xs font-extrabold text-[#9BA3AF] uppercase tracking-widest">Trening we wskazanym dniu</h4>
+						<span id="reports-selected-date" class="text-xs text-[#9BA3AF] font-bold">Wybierz dzień</span>
+					</div>
+					<div id="selected-day-workouts" class="space-y-3 text-xs text-[#9BA3AF]">
+						Zaznacz dzień w kalendarzu, aby wyświetlić szczegóły treningu.
+					</div>
+				</div>
+
+				<!-- Ostatnie treningi (Akordeon) -->
+				<div class="bg-[#1A1D23] border border-white/5 rounded-xl p-4 space-y-3">
+					<div class="border-b border-white/5 pb-2 flex items-center justify-between">
+						<h4 class="text-xs font-extrabold text-[#9BA3AF] uppercase tracking-widest">Ostatnie treningi</h4>
+						<span class="text-[10px] text-zinc-500 font-bold">Maks. 8 ostatnich</span>
+					</div>
+					<div id="recent-workouts-accordion" class="space-y-2">
+						<!-- Dynamiczne elementy akordeonu -->
+					</div>
+				</div>
+			</section>
+
+			<section id="pane-cwiczenia" data-tab-pane="cwiczenia" class="space-y-4 hidden">
+				<div class="bg-[#1A1D23] border border-white/5 rounded-xl p-3 flex gap-2 items-center">
+					<svg class="w-4 h-4 text-[#9BA3AF] ml-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<circle cx="11" cy="11" r="8" />
+						<line x1="21" y1="21" x2="16.65" y2="16.65" />
+					</svg>
+					<input type="text" id="exercise-search" placeholder="Szukaj ćwiczenia..." class="w-full bg-transparent border-none text-xs focus:outline-none text-white font-medium placeholder-zinc-500" />
+				</div>
+
+				<div id="muscle-category-pills" class="flex items-center gap-1.5 overflow-x-auto pb-1.5 -mx-4 px-4 custom-scroll scrollbar-none">
+					<button data-category="Wszystkie" class="px-3.5 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider whitespace-nowrap bg-[#BFFF00] text-black border border-[#BFFF00] transition-all">Wszystkie</button>
+					<button data-category="Klatka" class="px-3.5 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider whitespace-nowrap bg-white/5 text-[#9BA3AF] border border-white/5 hover:border-white/10 transition-all">Klatka</button>
+					<button data-category="Plecy" class="px-3.5 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider whitespace-nowrap bg-white/5 text-[#9BA3AF] border border-white/5 hover:border-white/10 transition-all">Plecy</button>
+					<button data-category="Nogi" class="px-3.5 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider whitespace-nowrap bg-white/5 text-[#9BA3AF] border border-white/5 hover:border-white/10 transition-all">Nogi</button>
+					<button data-category="Barki" class="px-3.5 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider whitespace-nowrap bg-white/5 text-[#9BA3AF] border border-white/5 hover:border-white/10 transition-all">Barki</button>
+					<button data-category="Ramiona" class="px-3.5 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider whitespace-nowrap bg-white/5 text-[#9BA3AF] border border-white/5 hover:border-white/10 transition-all">Ramiona</button>
+				</div>
+
+				<div class="bg-[#1A1D23] border border-white/5 rounded-xl p-4 space-y-3">
+					<h4 class="text-xs font-extrabold text-[#9BA3AF] uppercase tracking-widest">Utwórz własne ćwiczenie</h4>
+					<div class="space-y-2">
+						<input type="text" id="new-exercise-name" placeholder="Nazwa ćwiczenia (np. Przysiad budgarski)" class="w-full bg-[#0F1115] border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#BFFF00] font-medium" />
+						<div class="flex gap-2">
+							<select id="new-exercise-category" class="flex-1 bg-[#0F1115] border border-white/10 rounded-lg px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-[#BFFF00] font-medium">
+								<option value="Klatka">Klatka piersiowa</option>
+								<option value="Plecy">Plecy</option>
+								<option value="Nogi">Nogi</option>
+								<option value="Barki">Barki</option>
+								<option value="Ramiona">Ramiona</option>
+							</select>
+							<button id="btn-save-custom-exercise" class="bg-white/10 hover:bg-white/15 border border-white/5 text-[#BFFF00] font-bold text-xs px-4 py-2 rounded-lg transition-all">Dodaj</button>
+						</div>
+					</div>
+				</div>
+
+				<div id="exercise-catalog-list" class="grid gap-2"></div>
+			</section>
+
+			<section id="pane-ustawienia" data-tab-pane="ustawienia" class="space-y-4 hidden">
+				<div class="bg-[#1A1D23] border border-white/5 rounded-xl p-4 text-center space-y-2 relative overflow-hidden">
+					<div class="absolute -top-12 -left-12 w-32 h-32 bg-white/5 rounded-full blur-2xl"></div>
+					<div class="w-10 h-10 rounded-full bg-white/5 border border-white/5 flex items-center justify-center mx-auto text-zinc-400">
+						<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+							<circle cx="12" cy="7" r="4" />
+						</svg>
+					</div>
+					<div class="space-y-0.5">
+						<h3 class="text-sm font-bold text-white">Statystyki Profilu</h3>
+						<p id="profile-stats-summary" class="text-xs text-[#9BA3AF]">Aktywność od pierwszego logowania</p>
+					</div>
+				</div>
+
+				<div class="bg-[#1A1D23] border border-white/5 rounded-xl p-4 space-y-3">
+					<div class="flex items-center justify-between">
+						<h4 class="text-xs font-extrabold text-[#9BA3AF] uppercase tracking-widest">Eksportuj Dane (JSON)</h4>
+						<button id="btn-settings-copy" class="text-[10px] text-[#BFFF00] font-bold hover:underline">Skopiuj do schowka</button>
+					</div>
+					<textarea id="export-json-textarea" readonly class="w-full h-24 bg-[#0F1115] border border-white/10 rounded-lg p-2.5 font-mono text-[10px] text-[#9BA3AF] focus:outline-none custom-scroll resize-none"></textarea>
+				</div>
+
+				<div class="bg-[#1A1D23] border border-white/5 rounded-xl p-4 space-y-3">
+					<h4 class="text-xs font-extrabold text-[#9BA3AF] uppercase tracking-widest">Schemat Formatu JSON do Importu</h4>
+					<p class="text-[10px] text-[#9BA3AF] leading-normal">Możesz zaimportować plik JSON zawierający plany, bazę ćwiczeń lub historię treningów:</p>
+					<pre class="bg-[#0F1115] border border-white/10 rounded-lg p-3 font-mono text-[9px] text-[#BFFF00] overflow-x-auto select-all leading-tight">
+{
+	"plans": [
+		{
+			"id": "plan_a",
+			"name": "Trening A",
+			"exercises": [
+				{ "name": "Chest Press Machine", "category": "Klatka" }
+			]
+		}
+	],
+	"exercises": [
+		{
+			"id": "e1",
+			"name": "Chest Press Machine",
+			"category": "Klatka",
+			"description": "Opis techniki ćwiczenia."
+		}
+	]
+}
+					</pre>
+				</div>
+
+				<div class="bg-[#1A1D23] border border-white/5 rounded-xl p-4 space-y-4">
+					<h4 class="text-xs font-extrabold text-[#9BA3AF] uppercase tracking-widest">Importuj Dane (JSON)</h4>
+					
+					<div class="space-y-1.5">
+						<label for="import-json-file" class="block text-[10px] font-bold text-[#9BA3AF] uppercase tracking-widest">Wybierz plik .json</label>
+						<input type="file" id="import-json-file" accept=".json" class="w-full text-xs text-zinc-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-white/10 file:text-white hover:file:bg-white/15 cursor-pointer bg-[#0F1115] border border-white/10 rounded-lg p-2 focus:outline-none focus:border-[#BFFF00]" />
+					</div>
+
+					<div class="flex items-center gap-2">
+						<div class="flex-1 h-px bg-white/5"></div>
+						<span class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">LUB Wklej Tekst</span>
+						<div class="flex-1 h-px bg-white/5"></div>
+					</div>
+
+					<textarea id="import-json-textarea" placeholder="Wklej strukturę JSON tutaj..." class="w-full h-24 bg-[#0F1115] border border-white/10 rounded-lg p-2.5 font-mono text-[10px] text-zinc-300 focus:outline-none custom-scroll resize-none"></textarea>
+					
+					<button id="btn-settings-import" class="w-full bg-[#BFFF00] hover:bg-[#a6df00] text-black font-extrabold text-xs py-2.5 px-4 rounded-lg transition-all duration-200">WGRAJ I ODŚWIEŻ DATABAZĘ</button>
+					
+					<div id="import-status-msg" class="hidden text-xs font-bold py-2.5 px-3 rounded-lg text-center leading-normal"></div>
+				</div>
+
+				<div class="bg-[#1A1D23] border border-white/5 rounded-xl p-4 space-y-3">
+					<h4 class="text-xs font-extrabold text-red-500 uppercase tracking-widest">Strefa Niebezpieczna</h4>
+					<p class="text-[11px] text-[#9BA3AF]">Usunięcie wszystkich danych spowoduje bezpowrotne wymazanie całej historii treningowej z przeglądarki.</p>
+					<button id="btn-settings-clear" class="w-full bg-red-950 hover:bg-red-900 border border-red-800 text-red-400 font-extrabold text-xs py-2.5 px-4 rounded-lg transition-all duration-200">WYCZYŚĆ WSZYSTKIE DANE</button>
+				</div>
+			</section>
+		</main>
+
+		<nav id="bottom-navigation" class="bg-[#1A1D23] border-t border-white/5 py-2 pb-5 md:pb-2.5 flex justify-around items-center sticky bottom-0 z-40 md:relative md:bottom-auto">
+			<button data-tab-trigger="trening" class="flex flex-col items-center justify-center py-1.5 px-3 rounded-xl transition-all duration-200 text-[#9BA3AF] hover:text-white active-nav-item">
+				<svg class="w-5 h-5 mb-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+					<path d="M18 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3Z" />
+					<path d="M6 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3Z" />
+					<path d="M15 8h3" />
+					<path d="M6 8h3" />
+					<path d="M15 16h3" />
+					<path d="M6 16h3" />
+					<path d="M9 12h6" />
+				</svg>
+				<span class="text-[9px] font-bold uppercase tracking-wider">Trening</span>
+			</button>
+			<button data-tab-trigger="raporty" class="flex flex-col items-center justify-center py-1.5 px-3 rounded-xl transition-all duration-200 text-[#9BA3AF] hover:text-white">
+				<svg class="w-5 h-5 mb-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+					<rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+					<line x1="16" y1="2" x2="16" y2="6" />
+					<line x1="8" y1="2" x2="8" y2="6" />
+					<line x1="3" y1="10" x2="21" y2="10" />
+				</svg>
+				<span class="text-[9px] font-bold uppercase tracking-wider">Raporty</span>
+			</button>
+			<button data-tab-trigger="cwiczenia" class="flex flex-col items-center justify-center py-1.5 px-3 rounded-xl transition-all duration-200 text-[#9BA3AF] hover:text-white">
+				<svg class="w-5 h-5 mb-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+					<path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2Zm1 14h-2v-4h2V16Zm0-6h-2V8h2V10Z" />
+				</svg>
+				<span class="text-[9px] font-bold uppercase tracking-wider">Atlas</span>
+			</button>
+			<button data-tab-trigger="ustawienia" class="flex flex-col items-center justify-center py-1.5 px-3 rounded-xl transition-all duration-200 text-[#9BA3AF] hover:text-white">
+				<svg class="w-5 h-5 mb-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+					<circle cx="12" cy="12" r="3" />
+					<path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z" />
+				</svg>
+				<span class="text-[9px] font-bold uppercase tracking-wider">Ustawienia</span>
+			</button>
+		</nav>
+	</div>
+
+	<!-- Modal Informacyjny Ćwiczenia -->
+	<div id="exercise-info-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm transition-all duration-300">
+		<div class="bg-[#1A1D23] border border-white/10 rounded-2xl w-full max-w-sm overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.5)] transform scale-95 transition-all">
+			<div class="p-5 space-y-4">
+				<div class="flex items-start justify-between">
+					<div class="space-y-1">
+						<span id="modal-exercise-category" class="text-[9px] font-black text-[#BFFF00] uppercase tracking-wider bg-[#BFFF00]/5 px-2.5 py-1 rounded border border-[#BFFF00]/20">Klatka</span>
+						<h3 id="modal-exercise-name" class="text-xs font-bold text-white pt-1">Chest Press Machine</h3>
+					</div>
+					<button id="btn-close-modal" class="text-zinc-400 hover:text-white p-1 rounded-lg bg-white/5 transition-all">
+						<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+							<line x1="18" y1="6" x2="6" y2="18" />
+							<line x1="6" y1="6" x2="18" y2="18" />
+						</svg>
+					</button>
+				</div>
+				<div class="border-t border-white/5 pt-3.5 space-y-1.5">
+					<span class="text-[9px] font-extrabold text-[#9BA3AF] uppercase tracking-widest block">Jak wykonywać ćwiczenie:</span>
+					<p id="modal-exercise-description" class="text-xs text-zinc-300 leading-relaxed font-normal">Opis techniki...</p>
+				</div>
+				<button id="btn-close-modal-bottom" class="w-full bg-[#BFFF00] hover:bg-[#a6df00] text-black font-extrabold text-xs py-2.5 rounded-lg transition-all">Zamknij</button>
+			</div>
+		</div>
+	</div>
+
+	<script type="module" src="/app.js"></script>
+</body>
+</html>

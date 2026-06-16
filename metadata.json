@@ -1,0 +1,6 @@
+{
+  "name": "Gym Tracker",
+  "description": "Responsywna aplikacja Gym Tracker z nowoczesnym motywem Dark Mode.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
